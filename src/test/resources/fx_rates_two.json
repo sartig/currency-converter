@@ -1,0 +1,20 @@
+{
+    "eur": {
+      "code": "EUR",
+      "alphaCode": "EUR",
+      "numericCode": "978",
+      "name": "Euro",
+      "rate": 0.98535489535028,
+      "date": "Tue, 13 Sep 2022 11:55:01 GMT",
+      "inverseRate": 1.0148627714936
+    },
+    "gbp": {
+      "code": "GBP",
+      "alphaCode": "GBP",
+      "numericCode": "826",
+      "name": "U.K. Pound Sterling",
+      "rate": 0.85438980693642,
+      "date": "Tue, 13 Sep 2022 11:55:01 GMT",
+      "inverseRate": 1.1704259482983
+    }
+}
