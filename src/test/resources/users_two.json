@@ -1,0 +1,16 @@
+[
+	{
+		"name": "One",
+		"wallet": {
+			"usd": 100,
+			"cad": 120
+		}
+	},
+	{
+		"name": "Two",
+		"wallet": {
+			"cad": 508,
+			"jpy": 0.3
+		}
+	}
+]

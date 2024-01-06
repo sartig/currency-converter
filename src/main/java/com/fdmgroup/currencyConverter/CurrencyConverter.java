@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
  * Singleton to conserve memory
  */
 public class CurrencyConverter {
-	private static final String fxJsonFilePath = "src/main/resources/fx_rates.json";
+	private static final String FX_JSON_FILE_PATH = "src/main/resources/fx_rates.json";
 	private static CurrencyConverter instance;
 	private HashMap<String, Currency> currencyData = new HashMap<String, Currency>();
 	private static Logger logger = LogManager.getLogger(CurrencyConverter.class);
@@ -23,7 +23,8 @@ public class CurrencyConverter {
 	 */
 	private CurrencyConverter() {
 		// load json and store into hashmap
-		currencyData = FXDataReader.loadJsonFromFilepath(fxJsonFilePath);
+		FXJsonDataReader fxJsonDataReader = new FXJsonDataReader();
+		currencyData = fxJsonDataReader.loadDataFromFilePath(FX_JSON_FILE_PATH);
 	}
 
 	/**
@@ -48,6 +49,31 @@ public class CurrencyConverter {
 	}
 
 	/**
+	 * Private method to validate currencies with additional option whether to log.
+	 * Used in
+	 * {@code convert(String startCurrency, String endCurrency, double amount)} to
+	 * perform validation of currencies with a different error log.
+	 * 
+	 * @param shouldLog
+	 * @param currencies
+	 * @return
+	 */
+	private boolean validate(boolean shouldLog, String... currencies) {
+		for (String s : currencies) {
+			if (!currencyData.containsKey(s.toLowerCase()) && !"usd".equalsIgnoreCase(s)) {
+				if (shouldLog) {
+					logger.warn("Currency " + s + " not valid");
+				}
+				return false;
+			}
+		}
+		if (shouldLog) {
+			logger.info("Currency list " + Arrays.toString(currencies) + " validated");
+		}
+		return true;
+	}
+
+	/**
 	 * Method to validate whether all provided currencies have an entry in the
 	 * HashMap. USD is a special case as it is a valid currency but not stored in
 	 * the HashMap.
@@ -56,23 +82,21 @@ public class CurrencyConverter {
 	 * @return Returns true only if all currencies given are valid
 	 */
 	public boolean validate(String... currencies) {
-		for (String s : currencies) {
-			if (!currencyData.containsKey(s.toLowerCase()) && !"usd".equalsIgnoreCase(s)) {
-				logger.warn("Currency " + s + " not valid");
-				return false;
-			}
-		}
-		logger.info("Currency list " + Arrays.toString(currencies) + " validated");
-		return true;
+		return validate(true, currencies);
 	}
 
 	/**
 	 * Calculates conversion between currencies. USD is the anchor currency so its
-	 * multipliers are always 1.
+	 * multipliers are always 1. Results are rounded down to 2 decimal places to
+	 * prevent creating additional value.
+	 * 
+	 * If this method logs an error then it is likely that
+	 * {@code validate(String... currencies} was not called
 	 * 
 	 * @param startCurrency Starting currency as three lowercase letter code
 	 * @param endCurrency   Destination currency as three lowercase letter code
-	 * @param amount        Amount of starting currency to convert
+	 * @param amount        Amount of starting currency to convert. Rounded down if
+	 *                      more than 2 decimal places given.
 	 * @return
 	 */
 	public double convert(String startCurrency, String endCurrency, double amount) {
@@ -80,13 +104,43 @@ public class CurrencyConverter {
 			logger.warn("Trying to convert between identical currencies: " + startCurrency);
 			return amount;
 		}
+
+		if (!validate(false, startCurrency)) {
+			// if called, means validate() method was not called prior
+			logger.error("Trying to convert invalid currency: " + startCurrency);
+			return 0;
+		}
+		if (!validate(false, endCurrency)) {
+			// if called, means validate() method was not called prior
+			logger.error("Trying to convert invalid currency: " + endCurrency);
+			return 0;
+		}
+
+		// give warning, but still log as a successful conversion
+		if (amount == 0) {
+			logger.warn(
+					"Trying to convert zero " + startCurrency + " to " + endCurrency + " - method call unnecessary");
+			logger.info(String.format("Conversion of %.2f %s to %.2f %s", 0.0, startCurrency, 0.0, endCurrency));
+			return 0;
+		}
+
 		double toUsd = "usd".equalsIgnoreCase(startCurrency) ? 1 : currencyData.get(startCurrency).getInverseRate();
 		double fromUsd = "usd".equalsIgnoreCase(endCurrency) ? 1 : currencyData.get(endCurrency).getRate();
 
-		double result = amount * toUsd * fromUsd;
-		String logString = String.format("Conversion of %.2f %s to %.2f %s", amount, startCurrency, result,
-				endCurrency);
-		logger.info(logString);
-		return result;
+		// prevent input being greater precision than allowed
+		double roundedStartAmount = CurrencyRounder.roundCurrency(amount, false);
+		if (amount != roundedStartAmount) {
+			logger.warn(String.format("Amount to convert exceeds precision limit. Truncating %.2f... to %.2f",
+					roundedStartAmount, roundedStartAmount));
+		}
+
+		double result = roundedStartAmount * toUsd * fromUsd;
+		// round down final result to prevent the "creation" of extra currency
+		double finalResult = CurrencyRounder.roundCurrency(result, false);
+
+		// String.format ensures consistent display of currency amounts
+		logger.info(String.format("Conversion of %.2f %s to %.2f %s", roundedStartAmount, startCurrency, finalResult,
+				endCurrency));
+		return finalResult;
 	}
 }
