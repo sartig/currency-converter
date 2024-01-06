@@ -1,0 +1,2 @@
+Bob cad usd 100
+Susan cad eur 20
