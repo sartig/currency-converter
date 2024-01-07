@@ -18,8 +18,8 @@ public class UserManager {
 	private Logger logger = LogManager.getLogger(UserManager.class);
 
 	/**
-	 * Constructor is private as {@code UserManager} is a singleton. The JSON
-	 * data only needs to be loaded once
+	 * Constructor is private as {@code UserManager} is a singleton. The JSON data
+	 * only needs to be loaded once
 	 */
 	private UserManager() {
 		// load json and store into ArrayList
@@ -53,6 +53,7 @@ public class UserManager {
 
 	/**
 	 * Check if a user is in the ArrayList
+	 * 
 	 * @param name User name
 	 * @return Returns true if the user is in the list, false if it is not
 	 */
@@ -99,9 +100,12 @@ public class UserManager {
 				u.subtractCurrency(currencyFrom, CurrencyRounder.roundCurrency(amount, false));
 				double addAmount = CurrencyConverter.getInstance().convert(currencyFrom, currencyTo, amount);
 				u.addCurrency(currencyTo, addAmount);
+				return;
 			} catch (UserInsufficientBalance e) {
 				logger.error(e.getMessage());
 			}
 		}
+		logger.warn(String.format("Transaction for user %s: %.2f %s to %s failed due to user not existing in database",
+				name, amount, currencyFrom, currencyTo));
 	}
 }
