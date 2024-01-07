@@ -1,10 +1,14 @@
-package com.fdmgroup.currencyConverter;
+package com.fdmgroup.currencyConverter.transaction;
 
 import java.math.BigDecimal;
 import java.util.Queue;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.fdmgroup.currencyConverter.currency.CurrencyConverter;
+import com.fdmgroup.currencyConverter.io.UserJsonDataWriter;
+import com.fdmgroup.currencyConverter.user.UserManager;
 
 public class TransactionProcessor {
 	private UserManager userManager;
@@ -46,12 +50,12 @@ public class TransactionProcessor {
 
 		Queue<Transaction> transactions = transactionReader.readTransactions(transactionFilePath);
 		if (transactions == null) {
-			logger.warn("Transaction list is null");
+			logger.warn("com.fdmgroup.currencyConverter.transaction list is null");
 			return;
 		}
 		int transactionNum = transactions.size();
 		if (transactionNum == 0) {
-			logger.warn("Transaction list is empty");
+			logger.warn("com.fdmgroup.currencyConverter.transaction list is empty");
 			return;
 		}
 		int validTransactions = 0;
@@ -60,7 +64,7 @@ public class TransactionProcessor {
 			if (validateTransaction(currentTransaction)) {
 				validTransactions++;
 				userManager.executeTransaction(currentTransaction);
-				// update after each transaction so file is more closely synced to progress
+				// update after each com.fdmgroup.currencyConverter.transaction so file is more closely synced to progress
 				updateUserFile(userDataFilePath);
 			}
 		}
@@ -73,7 +77,7 @@ public class TransactionProcessor {
 				currencyTo = transaction.getCurrencyTo();
 		BigDecimal amount = transaction.getAmount();
 
-		String logBase = String.format("Transaction request %s: %.2f %s to %s ", name, amount, currencyFrom,
+		String logBase = String.format("com.fdmgroup.currencyConverter.transaction request %s: %.2f %s to %s ", name, amount, currencyFrom,
 				currencyTo);
 		String invalidLog = logBase + "is invalid due to ";
 		if (amount.compareTo(BigDecimal.ZERO) == 0) {

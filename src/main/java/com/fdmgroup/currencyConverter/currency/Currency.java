@@ -1,4 +1,4 @@
-package com.fdmgroup.currencyConverter;
+package com.fdmgroup.currencyConverter.currency;
 
 /**
  * Simple POJO class to store data on currencies

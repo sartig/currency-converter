@@ -1,4 +1,4 @@
-package com.fdmgroup.currencyConverter;
+package com.fdmgroup.currencyConverter.io;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.spi.StandardLevel;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fdmgroup.currencyConverter.user.User;
 
 public class UserJsonDataWriter {
 	private static Logger logger = LogManager.getLogger(UserJsonDataWriter.class);

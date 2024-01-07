@@ -1,4 +1,4 @@
-package com.fdmgroup.currencyConverter;
+package com.fdmgroup.currencyConverter.io;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.spi.StandardLevel;

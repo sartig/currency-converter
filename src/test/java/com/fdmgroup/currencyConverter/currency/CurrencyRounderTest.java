@@ -1,4 +1,4 @@
-package com.fdmgroup.currencyConverter;
+package com.fdmgroup.currencyConverter.currency;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -1,8 +1,10 @@
-package com.fdmgroup.currencyConverter;
+package com.fdmgroup.currencyConverter.user;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.fdmgroup.currencyConverter.currency.CurrencyRounder;
 
 public class User {
 	private String name;

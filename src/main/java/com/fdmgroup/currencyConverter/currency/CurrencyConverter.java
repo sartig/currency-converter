@@ -1,4 +1,4 @@
-package com.fdmgroup.currencyConverter;
+package com.fdmgroup.currencyConverter.currency;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -6,6 +6,8 @@ import java.util.HashMap;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.fdmgroup.currencyConverter.io.FXJsonDataReader;
 
 /**
  * Class used for calculating conversion data between currencies.

@@ -1,9 +1,9 @@
-package com.fdmgroup.currencyConverter;
+package com.fdmgroup.currencyConverter.transaction;
 
 import java.math.BigDecimal;
 
 /**
- * Simple POJO class to hold information on an individual transaction
+ * Simple POJO class to hold information on an individual com.fdmgroup.currencyConverter.transaction
  */
 public class Transaction {
 	private String name;

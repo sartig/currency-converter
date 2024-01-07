@@ -1,5 +1,7 @@
 package com.fdmgroup.currencyConverter;
 
+import com.fdmgroup.currencyConverter.transaction.TransactionProcessor;
+
 public class Runner {
 
 	private final static String transactionFilePath = "src/main/resources/transactions.txt";

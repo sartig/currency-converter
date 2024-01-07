@@ -1,4 +1,4 @@
-package com.fdmgroup.currencyConverter;
+package com.fdmgroup.currencyConverter.currency;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

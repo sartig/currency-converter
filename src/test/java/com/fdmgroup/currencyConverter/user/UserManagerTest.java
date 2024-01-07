@@ -1,4 +1,4 @@
-package com.fdmgroup.currencyConverter;
+package com.fdmgroup.currencyConverter.user;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.fdmgroup.currencyConverter.transaction.Transaction;
 
 @ExtendWith(MockitoExtension.class)
 class UserManagerTest {
@@ -74,7 +76,7 @@ class UserManagerTest {
 	@Test
 	void executeTransaction_WithInvalidName_DoesNotCallSubtractOrAddCurrency_OnAnyUsers() {
 		userManager.executeTransaction(invalidNameTransaction);
-		verify(mockLogger).warn("Transaction for user D: 10.00 usd to abc failed due to user not existing in database");
+		verify(mockLogger).warn("com.fdmgroup.currencyConverter.transaction for user D: 10.00 usd to abc failed due to user not existing in database");
 		verify(mockUser1, never()).addCurrency(anyString(), any());
 		verify(mockUser2, never()).addCurrency(anyString(), any());
 		verify(mockUser3, never()).addCurrency(anyString(), any());

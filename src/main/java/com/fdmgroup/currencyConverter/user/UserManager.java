@@ -1,4 +1,4 @@
-package com.fdmgroup.currencyConverter;
+package com.fdmgroup.currencyConverter.user;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -6,6 +6,11 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.fdmgroup.currencyConverter.currency.CurrencyConverter;
+import com.fdmgroup.currencyConverter.currency.CurrencyRounder;
+import com.fdmgroup.currencyConverter.io.UserJsonDataReader;
+import com.fdmgroup.currencyConverter.transaction.Transaction;
 
 /**
  * Class used for managing Users in app memory.
@@ -112,7 +117,7 @@ public class UserManager {
 				logger.error(e.getMessage());
 			}
 		}
-		logger.warn(String.format("Transaction for user %s: %.2f %s to %s failed due to user not existing in database",
+		logger.warn(String.format("com.fdmgroup.currencyConverter.transaction for user %s: %.2f %s to %s failed due to user not existing in database",
 				name, amount, currencyFrom, currencyTo));
 	}
 }

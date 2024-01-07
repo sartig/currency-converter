@@ -1,4 +1,4 @@
-package com.fdmgroup.currencyConverter;
+package com.fdmgroup.currencyConverter.user;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,22 +19,22 @@ class UserTest {
 
 	@Test
 	void getWallet_ReturnsEmptyMap_WhenCalled_OnNewUser() {
-		HashMap<String, BigDecimal> expected = new HashMap<String, BigDecimal>();
+		HashMap<String, Double> expected = new HashMap<String, Double>();
 		assertEquals(expected, user.getWallet());
 	}
 
 	@Test
 	void addCurrency_With0HKD_DoesNotUpdateWallet() {
 		user.addCurrency("hkd", new BigDecimal("0"));
-		HashMap<String, BigDecimal> expected = new HashMap<String, BigDecimal>();
+		HashMap<String, Double> expected = new HashMap<String, Double>();
 		assertEquals(expected, user.getWallet());
 	}
 
 	@Test
 	void addCurrency_With10USD_UpdatesWalletWithCorrectValues() {
 		user.addCurrency("usd", new BigDecimal("10"));
-		HashMap<String, BigDecimal> expected = new HashMap<String, BigDecimal>();
-		expected.put("usd", new BigDecimal("10.00"));
+		HashMap<String, Double> expected = new HashMap<String, Double>();
+		expected.put("usd", 10.00);
 		assertEquals(expected, user.getWallet());
 	}
 
@@ -43,8 +43,8 @@ class UserTest {
 		user.addCurrency("usd", new BigDecimal("10"));
 		user.addCurrency("usd", new BigDecimal("10"));
 		user.addCurrency("usd", new BigDecimal("10"));
-		HashMap<String, BigDecimal> expected = new HashMap<String, BigDecimal>();
-		expected.put("usd", new BigDecimal("30.00"));
+		HashMap<String, Double> expected = new HashMap<String, Double>();
+		expected.put("usd", 30.00);
 		assertEquals(expected, user.getWallet());
 	}
 
@@ -69,8 +69,8 @@ class UserTest {
 	void subtractCurrency_With30Point0USD_DoesNotThrowError_AndUpdatesWalletwithCorrectValues() {
 		user.addCurrency("usd", new BigDecimal("176.98"));
 		assertDoesNotThrow(() -> user.subtractCurrency("usd", new BigDecimal("30.00")));
-		HashMap<String, BigDecimal> expected = new HashMap<String, BigDecimal>();
-		expected.put("usd", new BigDecimal("146.98"));
+		HashMap<String, Double> expected = new HashMap<String, Double>();
+		expected.put("usd", 146.98);
 		assertEquals(expected, user.getWallet());
 	}
 
@@ -81,8 +81,8 @@ class UserTest {
 		assertDoesNotThrow(() -> user.subtractCurrency("usd", new BigDecimal("5")));
 		assertDoesNotThrow(() -> user.subtractCurrency("usd", new BigDecimal("5")));
 		assertDoesNotThrow(() -> user.subtractCurrency("usd", new BigDecimal("5")));
-		HashMap<String, BigDecimal> expected = new HashMap<String, BigDecimal>();
-		expected.put("usd", new BigDecimal("10.00"));
+		HashMap<String, Double> expected = new HashMap<String, Double>();
+		expected.put("usd", 10.00);
 		assertEquals(expected, user.getWallet());
 	}
 
@@ -90,7 +90,7 @@ class UserTest {
 	void subtractCurrency_WithSameAmountAsInWallet_DoesNotThrowError_AndRemovesEntryFromWallet() {
 		user.addCurrency("usd", new BigDecimal("30"));
 		assertDoesNotThrow(() -> user.subtractCurrency("usd", new BigDecimal("30")));
-		HashMap<String, BigDecimal> expected = new HashMap<String, BigDecimal>();
+		HashMap<String, Double> expected = new HashMap<String, Double>();
 		assertEquals(expected, user.getWallet());
 	}
 

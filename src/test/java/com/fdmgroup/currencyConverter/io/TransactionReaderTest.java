@@ -1,8 +1,9 @@
-package com.fdmgroup.currencyConverter;
+package com.fdmgroup.currencyConverter.io;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 
+import java.math.BigDecimal;
 import java.nio.file.FileSystems;
 import java.util.Queue;
 
@@ -12,6 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import com.fdmgroup.currencyConverter.transaction.Transaction;
+import com.fdmgroup.currencyConverter.transaction.TransactionReader;
 
 @ExtendWith(MockitoExtension.class)
 class TransactionReaderTest {
@@ -57,7 +61,7 @@ class TransactionReaderTest {
 		String filePath = "src/test/resources/transactions_stringAmount.txt";
 		String properFilePath = filePath.replace("/", FileSystems.getDefault().getSeparator());
 		Queue<Transaction> result = transactionReader.readTransactions(filePath);
-		verify(mockLogger).error("Unable to parse line 1: amount 'five' as a double - skipping to next line");
+		verify(mockLogger).error("Unable to parse line 1: amount 'five' as a BigDecimal - skipping to next line");
 		verify(mockLogger).warn("Parsing file at " + properFilePath + " resulted in zero transactions");
 		assertTrue(result.isEmpty());
 
@@ -72,7 +76,7 @@ class TransactionReaderTest {
 		Transaction first = result.peek();
 		assertEquals(2, result.size());
 		assertEquals("Bob", first.getName());
-		assertEquals(100, first.getAmount());
+		assertEquals(0, first.getAmount().compareTo(new BigDecimal("100")));
 	}
 
 	@Test
@@ -80,12 +84,12 @@ class TransactionReaderTest {
 		String filePath = "src/test/resources/transactions_two_and_wrong.txt";
 		String properFilePath = filePath.replace("/", FileSystems.getDefault().getSeparator());
 		Queue<Transaction> result = transactionReader.readTransactions(filePath);
-		verify(mockLogger).error("Unable to parse line 3: amount 'heh' as a double - skipping to next line");
+		verify(mockLogger).error("Unable to parse line 3: amount 'heh' as a BigDecimal - skipping to next line");
 		verify(mockLogger).info("Successfully parsed 2 transactions from file " + properFilePath);
 		Transaction first = result.peek();
 		assertEquals(2, result.size());
 		assertEquals("Chad", first.getName());
-		assertEquals(200.59, first.getAmount());
+		assertEquals(0, first.getAmount().compareTo(new BigDecimal("200.59")));
 	}
 
 }

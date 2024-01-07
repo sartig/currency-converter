@@ -1,4 +1,4 @@
-package com.fdmgroup.currencyConverter;
+package com.fdmgroup.currencyConverter.transaction;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

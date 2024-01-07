@@ -1,4 +1,4 @@
-package com.fdmgroup.currencyConverter;
+package com.fdmgroup.currencyConverter.user;
 
 public class UserInsufficientBalance extends Exception {
 
