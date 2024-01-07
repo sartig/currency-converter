@@ -1,5 +1,6 @@
 package com.fdmgroup.currencyConverter;
 
+import java.math.BigDecimal;
 import java.util.Queue;
 
 import org.apache.logging.log4j.LogManager;
@@ -70,12 +71,12 @@ public class TransactionProcessor {
 	private boolean validateTransaction(Transaction transaction) {
 		String name = transaction.getName(), currencyFrom = transaction.getCurrencyFrom(),
 				currencyTo = transaction.getCurrencyTo();
-		double amount = transaction.getAmount();
+		BigDecimal amount = transaction.getAmount();
 
 		String logBase = String.format("Transaction request %s: %.2f %s to %s ", name, amount, currencyFrom,
 				currencyTo);
 		String invalidLog = logBase + "is invalid due to ";
-		if (amount == 0) {
+		if (amount.compareTo(BigDecimal.ZERO) == 0) {
 			logger.warn(invalidLog + "zero-value amount");
 			return false;
 		}
@@ -97,8 +98,8 @@ public class TransactionProcessor {
 			logger.warn(invalidLog + "user not existing in list");
 			return false;
 		}
-		double userAmount = userManager.getUserBalance(name, currencyFrom);
-		if (userAmount < amount) {
+		BigDecimal userAmount = userManager.getUserBalance(name, currencyFrom);
+		if (userAmount.compareTo(amount) == -1) {
 			logger.warn(invalidLog + String.format("insufficient balance in user wallet (%.2f)", userAmount));
 			return false;
 		}

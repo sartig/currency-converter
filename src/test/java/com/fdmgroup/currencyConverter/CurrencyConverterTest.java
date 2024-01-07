@@ -3,6 +3,8 @@ package com.fdmgroup.currencyConverter;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 
+import java.math.BigDecimal;
+
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,50 +57,49 @@ class CurrencyConverterTest {
 
 	@Test
 	void convert_WithInvalidCurrency_Returns0_AndLogsError() {
-		double result = currencyConverter.convert("abc", "usd", 10);
+		BigDecimal result = currencyConverter.convert("abc", "usd", new BigDecimal("10"));
 		verify(mockLogger).error("Trying to convert invalid currency: abc");
-		assertEquals(0, result);
+		assertEquals(0, result.compareTo(BigDecimal.ZERO));
 	}
 
 	@Test
 	void convert_ZeroUsdToHKD_Returns0_AndLogsWarning_ButStillLogsInfo() {
-		double result = currencyConverter.convert("usd", "hkd", 0);
+		BigDecimal result = currencyConverter.convert("usd", "hkd", new BigDecimal("0"));
 		verify(mockLogger).warn("Trying to convert zero usd to hkd - method call unnecessary");
 		verify(mockLogger).info("Conversion of 0.00 usd to 0.00 hkd");
-		assertEquals(0, result);
+		assertEquals(0, result.compareTo(BigDecimal.ZERO));
 	}
 
 	@Test
 	void convert_100Point009GBPToHKD_RoundsAmountToConvertDown_AndLogsWarning_AndLogsInfoWith100Instead() {
 
-		double expected = 918.64; // rounded from 918.641...
-		double result = currencyConverter.convert("gbp", "hkd", 100.009);
-		verify(mockLogger).warn("Amount to convert exceeds precision limit. Truncating 100.00... to 100.00");
+		BigDecimal expected = new BigDecimal("918.64"); // rounded from 918.641...
+		BigDecimal result = currencyConverter.convert("gbp", "hkd", new BigDecimal("100.009"));
 		verify(mockLogger).info("Conversion of 100.00 gbp to 918.64 hkd");
-		assertEquals(result, expected);
+		assertEquals(0, result.compareTo(expected));
 	}
 
 	@Test
 	void convert_100GBPToHKD_ReturnsTruncatedValue_AndLogsInfo() {
-		double expected = 918.64; // rounded from 918.641...
-		double result = currencyConverter.convert("gbp", "hkd", 100);
+		BigDecimal expected = new BigDecimal("918.64"); // rounded from 918.641...
+		BigDecimal result = currencyConverter.convert("gbp", "hkd", new BigDecimal("100"));
 		verify(mockLogger).info("Conversion of 100.00 gbp to 918.64 hkd");
-		assertEquals(result, expected);
+		assertEquals(0, result.compareTo(expected));
 	}
 
 	@Test
 	void convert_1USDToEUR_ReturnsRoundedDownValue_AndLogsInfo() {
-		double expected = 0.98; // rounded down from 0.985...
-		double result = currencyConverter.convert("usd", "eur", 1);
+		BigDecimal expected = new BigDecimal("0.98"); // rounded down from 0.985...
+		BigDecimal result = currencyConverter.convert("usd", "eur", new BigDecimal("1"));
 		verify(mockLogger).info("Conversion of 1.00 usd to 0.98 eur");
-		assertEquals(result, expected);
+		assertEquals(0, result.compareTo(expected));
 	}
 
 	@Test
 	void convert_100GBPToGBP_Returns100_AndLogsWarning() {
-		double result = currencyConverter.convert("gbp", "gbp", 100);
+		BigDecimal result = currencyConverter.convert("gbp", "gbp", new BigDecimal("100"));
 		verify(mockLogger).warn("Trying to convert between identical currencies: gbp");
-		assertEquals(result, 100);
+		assertEquals(0, result.compareTo(new BigDecimal("100")));
 	}
 
 }

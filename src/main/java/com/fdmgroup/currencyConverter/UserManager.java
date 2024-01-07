@@ -1,5 +1,6 @@
 package com.fdmgroup.currencyConverter;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -72,34 +73,40 @@ public class UserManager {
 	 * @param currency
 	 * @return
 	 */
-	public double getUserBalance(String name, String currency) {
+	public BigDecimal getUserBalance(String name, String currency) {
 		for (User u : userData) {
 			if (!u.getName().equals(name)) {
 				continue;
 			}
 			Map<String, Double> userWallet = u.getWallet();
 			if (userWallet.get(currency) == null) {
-				return 0;
+				return BigDecimal.ZERO;
 			}
-			return userWallet.get(currency);
+			return new BigDecimal(Double.toString(userWallet.get(currency)));
 
 		}
-		return 0;
+		return BigDecimal.ZERO;
 	}
 
 	public void executeTransaction(Transaction transaction) {
 		String name = transaction.getName(), currencyFrom = transaction.getCurrencyFrom(),
 				currencyTo = transaction.getCurrencyTo();
-		double amount = transaction.getAmount();
+		BigDecimal amount = transaction.getAmount();
 
 		for (User u : userData) {
 			if (!u.getName().equals(name)) {
 				continue;
 			}
 			try {
-				u.subtractCurrency(currencyFrom, CurrencyRounder.roundCurrency(amount, false));
-				double addAmount = CurrencyConverter.getInstance().convert(currencyFrom, currencyTo, amount);
+				BigDecimal subtractAmount = CurrencyRounder.roundCurrency(amount, false);
+				u.subtractCurrency(currencyFrom, subtractAmount);
+				BigDecimal addAmount = CurrencyConverter.getInstance().convert(currencyFrom, currencyTo, amount);
 				u.addCurrency(currencyTo, addAmount);
+				logger.info(String.format("User %s: converted %.2f %s to %.2f %s", u.getName(),
+						subtractAmount.doubleValue(), currencyFrom, addAmount.doubleValue(), currencyTo));
+				logger.info(String.format("Updated user %s balance: %.2f %s, %.2f %s", u.getName(),
+						u.getWallet().get(currencyFrom).doubleValue(), currencyFrom,
+						u.getWallet().get(currencyTo).doubleValue(), currencyTo));
 				return;
 			} catch (UserInsufficientBalance e) {
 				logger.error(e.getMessage());

@@ -1,5 +1,6 @@
 package com.fdmgroup.currencyConverter;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -99,7 +100,7 @@ public class CurrencyConverter {
 	 *                      more than 2 decimal places given.
 	 * @return
 	 */
-	public double convert(String startCurrency, String endCurrency, double amount) {
+	public BigDecimal convert(String startCurrency, String endCurrency, BigDecimal amount) {
 		if (startCurrency.equalsIgnoreCase(endCurrency)) {
 			logger.warn("Trying to convert between identical currencies: " + startCurrency);
 			return amount;
@@ -108,38 +109,35 @@ public class CurrencyConverter {
 		if (!validate(false, startCurrency)) {
 			// if called, means validate() method was not called prior
 			logger.error("Trying to convert invalid currency: " + startCurrency);
-			return 0;
+			return BigDecimal.ZERO;
 		}
 		if (!validate(false, endCurrency)) {
 			// if called, means validate() method was not called prior
 			logger.error("Trying to convert invalid currency: " + endCurrency);
-			return 0;
+			return BigDecimal.ZERO;
 		}
 
 		// give warning, but still log as a successful conversion
-		if (amount == 0) {
+		if (amount.compareTo(BigDecimal.ZERO) == 0) {
 			logger.warn(
 					"Trying to convert zero " + startCurrency + " to " + endCurrency + " - method call unnecessary");
 			logger.info(String.format("Conversion of %.2f %s to %.2f %s", 0.0, startCurrency, 0.0, endCurrency));
-			return 0;
+			return amount;
 		}
 
 		double toUsd = "usd".equalsIgnoreCase(startCurrency) ? 1 : currencyData.get(startCurrency).getInverseRate();
 		double fromUsd = "usd".equalsIgnoreCase(endCurrency) ? 1 : currencyData.get(endCurrency).getRate();
 
 		// prevent input being greater precision than allowed
-		double roundedStartAmount = CurrencyRounder.roundCurrency(amount, false);
-		if (amount != roundedStartAmount) {
-			logger.warn(String.format("Amount to convert exceeds precision limit. Truncating %.2f... to %.2f",
-					roundedStartAmount, roundedStartAmount));
-		}
-
-		double result = roundedStartAmount * toUsd * fromUsd;
+		BigDecimal startAmount = CurrencyRounder.roundCurrency(amount, false);
+		String toUsdString = Double.toString(toUsd);
+		String fromUsdString = Double.toString(fromUsd);
+		BigDecimal result = startAmount.multiply(new BigDecimal(toUsdString)).multiply(new BigDecimal(fromUsdString));
 		// round down final result to prevent the "creation" of extra currency
-		double finalResult = CurrencyRounder.roundCurrency(result, false);
+		BigDecimal finalResult = CurrencyRounder.roundCurrency(result, false);
 
 		// String.format ensures consistent display of currency amounts
-		logger.info(String.format("Conversion of %.2f %s to %.2f %s", roundedStartAmount, startCurrency, finalResult,
+		logger.info(String.format("Conversion of %.2f %s to %.2f %s", startAmount.doubleValue(), startCurrency, finalResult.doubleValue(),
 				endCurrency));
 		return finalResult;
 	}

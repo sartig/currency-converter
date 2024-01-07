@@ -2,6 +2,7 @@ package com.fdmgroup.currencyConverter;
 
 import static org.mockito.Mockito.*;
 
+import java.math.BigDecimal;
 import java.util.LinkedList;
 
 import org.apache.logging.log4j.Logger;
@@ -24,12 +25,12 @@ class TransactionProcessorTest {
 	@Mock
 	TransactionReader mockTransactionReader;
 
-	Transaction transactionWithSameCurrency = new Transaction("Dupe", "usd", "usd", 19),
-			transactionWithZeroAmount = new Transaction("Zero", "gbp", "hkd", 0),
-			transactionWithInvalidCurrency = new Transaction("Invalid", "zzz", "aaa", 103),
-			transactionWithBadName = new Transaction("Gone", "hkd", "usd", 100),
-			transactionWithBadWallet = new Transaction("Poor", "hkd", "usd", 1000),
-			transactionWithValid = new Transaction("Valid", "usd", "gbp", 10);
+	Transaction transactionWithSameCurrency = new Transaction("Dupe", "usd", "usd", new BigDecimal("19")),
+			transactionWithZeroAmount = new Transaction("Zero", "gbp", "hkd", new BigDecimal("0")),
+			transactionWithInvalidCurrency = new Transaction("Invalid", "zzz", "aaa", new BigDecimal("103")),
+			transactionWithBadName = new Transaction("Gone", "hkd", "usd", new BigDecimal("100")),
+			transactionWithBadWallet = new Transaction("Poor", "hkd", "usd", new BigDecimal("1000")),
+			transactionWithValid = new Transaction("Valid", "usd", "gbp", new BigDecimal("10"));
 
 	TransactionProcessor transactionProcessor;
 
@@ -121,7 +122,7 @@ class TransactionProcessorTest {
 		when(mockCurrencyConverter.validate("hkd")).thenReturn(true);
 		when(mockCurrencyConverter.validate("usd")).thenReturn(true);
 		when(mockUserManager.validateUser("Poor")).thenReturn(true);
-		when(mockUserManager.getUserBalance("Poor", "hkd")).thenReturn(50.0);
+		when(mockUserManager.getUserBalance("Poor", "hkd")).thenReturn(new BigDecimal("50.00"));
 
 		transactionProcessor.processAllTransactions("dummy", "dummy");
 
@@ -138,7 +139,7 @@ class TransactionProcessorTest {
 		when(mockCurrencyConverter.validate("usd")).thenReturn(true);
 		when(mockCurrencyConverter.validate("gbp")).thenReturn(true);
 		when(mockUserManager.validateUser("Valid")).thenReturn(true);
-		when(mockUserManager.getUserBalance("Valid", "usd")).thenReturn(40.0);
+		when(mockUserManager.getUserBalance("Valid", "usd")).thenReturn(new BigDecimal("40.00"));
 		when(mockUserManager.getUserData()).thenReturn(null);
 
 		transactionProcessor.processAllTransactions("dummy", "dummy2");
@@ -158,7 +159,7 @@ class TransactionProcessorTest {
 		when(mockCurrencyConverter.validate("usd")).thenReturn(true);
 		when(mockCurrencyConverter.validate("gbp")).thenReturn(true);
 		when(mockUserManager.validateUser("Valid")).thenReturn(true);
-		when(mockUserManager.getUserBalance("Valid", "usd")).thenReturn(40.0);
+		when(mockUserManager.getUserBalance("Valid", "usd")).thenReturn(new BigDecimal("40.00"));
 		when(mockUserManager.getUserData()).thenReturn(null);
 
 		transactionProcessor.processAllTransactions("dummy", "dummy2");
@@ -179,7 +180,7 @@ class TransactionProcessorTest {
 		when(mockCurrencyConverter.validate("usd")).thenReturn(true);
 		when(mockCurrencyConverter.validate("gbp")).thenReturn(true);
 		when(mockUserManager.validateUser("Valid")).thenReturn(true);
-		when(mockUserManager.getUserBalance("Valid", "usd")).thenReturn(40.0);
+		when(mockUserManager.getUserBalance("Valid", "usd")).thenReturn(new BigDecimal("40.0"));
 		when(mockUserManager.getUserData()).thenReturn(null);
 
 		transactionProcessor.processAllTransactions("dummy", "dummy2");

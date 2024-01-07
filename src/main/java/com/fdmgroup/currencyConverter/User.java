@@ -1,5 +1,6 @@
 package com.fdmgroup.currencyConverter;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,16 +44,18 @@ public class User {
 	 * @param currencyName Currency to add
 	 * @param amount       Amount to add. Will truncate to 2 decimal places.
 	 */
-	public void addCurrency(String currencyName, double amount) {
-		if (amount == 0) {
+	public void addCurrency(String currencyName, BigDecimal amount) {
+		if (amount.compareTo(BigDecimal.ZERO) == 0) {
 			return;
 		}
 		// should only add amounts that are max 2 decimal places
 		// always round down amount added
-		double roundedAmount = CurrencyRounder.roundCurrency(amount, false);
 		String currencylower = currencyName.toLowerCase();
-		double existingAmount = wallet.get(currencylower) != null ? wallet.get(currencylower) : 0;
-		wallet.put(currencylower, existingAmount + roundedAmount);
+		BigDecimal existingAmount = wallet.get(currencylower) != null
+				? new BigDecimal(Double.toString(wallet.get(currencylower)))
+				: BigDecimal.ZERO;
+		BigDecimal finalAmount = CurrencyRounder.roundCurrency(existingAmount.add(amount), false);
+		wallet.put(currencylower, finalAmount.doubleValue());
 	}
 
 	/**
@@ -64,31 +67,30 @@ public class User {
 	 *                                 specific currency to be removed. Leaves the
 	 *                                 wallet unchanged.
 	 */
-	public void subtractCurrency(String currencyName, double amount) throws UserInsufficientBalance {
-		if (amount == 0) {
+	public void subtractCurrency(String currencyName, BigDecimal amount) throws UserInsufficientBalance {
+		if (amount.compareTo(BigDecimal.ZERO) == 0) {
 			return;
 		}
 
-		// should only subtract amounts that are max 2 decimal places
-		// always round up amount subtracted
-		double roundedAmount = CurrencyRounder.roundCurrency(amount, false);
-
 		String currencyLower = currencyName.toLowerCase();
-		double existingAmount = wallet.get(currencyLower) != null ? wallet.get(currencyLower) : 0;
-
-		if (existingAmount < roundedAmount) {
+		BigDecimal existingAmount = wallet.get(currencyLower) != null
+				? new BigDecimal(Double.toString(wallet.get(currencyLower)))
+						: BigDecimal.ZERO;
+		BigDecimal subtractAmount = CurrencyRounder.roundCurrency(amount, false);
+		if (existingAmount.compareTo(subtractAmount) < 0) {
 			String errorMessage = String.format(
 					"User %s has insufficient balance of %s. Current balance: %.2f, required balance: %.2f.", name,
-					currencyName, existingAmount, roundedAmount);
+					currencyName, existingAmount.doubleValue(), subtractAmount.doubleValue());
 			throw new UserInsufficientBalance(errorMessage);
 		}
 
-		double remainingAmount = existingAmount - roundedAmount;
-		if (remainingAmount == 0) {
+		BigDecimal remainingAmount = existingAmount.subtract(subtractAmount);
+		remainingAmount = CurrencyRounder.roundCurrency(remainingAmount, false);
+		if (remainingAmount.compareTo(BigDecimal.ZERO) == 0) {
 			wallet.remove(currencyLower);
 			return;
 		}
-		wallet.put(currencyLower, remainingAmount);
+		wallet.put(currencyLower, remainingAmount.doubleValue());
 	}
 
 }

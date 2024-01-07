@@ -3,6 +3,7 @@ package com.fdmgroup.currencyConverter;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.FileSystems;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -35,12 +36,12 @@ public class TransactionReader {
 				String currencyTo = dataMembers[2];
 
 				try {
-					double amount = Double.parseDouble(dataMembers[3]);
+					BigDecimal amount = new BigDecimal(dataMembers[3]);
 					transactionQueue.add(new Transaction(name, currencyFrom, currencyTo, amount));
 
 				} catch (NumberFormatException nfe) {
 					logger.error("Unable to parse line " + lineNumber + ": amount '" + dataMembers[3]
-							+ "' as a double - skipping to next line");
+							+ "' as a BigDecimal - skipping to next line");
 				}
 			}
 		} catch (IOException e) {

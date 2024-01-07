@@ -4,7 +4,7 @@
     <Properties>
         <Property name="LOG_PATTERN">%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %p %m%n</Property>
         <Property name="CONSOLE_PATTERN">%d{HH:mm:ss.SSSZ} %p %m%n</Property>
-        <Property name="APP_LOG_ROOT">c:/temp/logs</Property>
+        <Property name="APP_LOG_ROOT">src/main/logs</Property>
     </Properties>
     <Appenders>
         <!-- Console Appender -->
@@ -14,7 +14,6 @@
         <!-- File Appenders on need basis -->
         <RollingFile name="fullLog" fileName="${APP_LOG_ROOT}/app-full.log"
             filePattern="${APP_LOG_ROOT}/app-full-%d{yyyy-MM-dd}-%i.log">
-            <LevelRangeFilter minLevel="DEBUG" maxLevel="DEBUG" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout pattern="${LOG_PATTERN}"/>
             <Policies>
                 <SizeBasedTriggeringPolicy size="10MB" />
@@ -61,6 +60,7 @@
     <Loggers>
         <Logger name="com.fdmgroup.currencyConverter" additivity="false" level="debug">
             <AppenderRef ref="debugLog" />
+            <AppenderRef ref="fullLog" />
             <AppenderRef ref="infoLog"  />
             <AppenderRef ref="warnLog" />
             <AppenderRef ref="errorLog"  />

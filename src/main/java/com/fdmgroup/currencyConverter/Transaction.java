@@ -1,5 +1,7 @@
 package com.fdmgroup.currencyConverter;
 
+import java.math.BigDecimal;
+
 /**
  * Simple POJO class to hold information on an individual transaction
  */
@@ -7,9 +9,9 @@ public class Transaction {
 	private String name;
 	private String currencyFrom;
 	private String currencyTo;
-	private double amount;
+	private BigDecimal amount;
 
-	public Transaction(String name, String currencyFrom, String currencyTo, double amount) {
+	public Transaction(String name, String currencyFrom, String currencyTo, BigDecimal amount) {
 		super();
 		this.name = name;
 		this.currencyFrom = currencyFrom;
@@ -29,7 +31,7 @@ public class Transaction {
 		return currencyTo;
 	}
 
-	public double getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 }
