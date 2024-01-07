@@ -3,7 +3,7 @@ package com.fdmgroup.currencyConverter.transaction;
 import java.math.BigDecimal;
 
 /**
- * Simple POJO class to hold information on an individual com.fdmgroup.currencyConverter.transaction
+ * Simple POJO class to hold information on an individual transaction
  */
 public class Transaction {
 	private String name;

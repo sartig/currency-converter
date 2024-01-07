@@ -117,7 +117,9 @@ public class UserManager {
 				logger.error(e.getMessage());
 			}
 		}
-		logger.warn(String.format("com.fdmgroup.currencyConverter.transaction for user %s: %.2f %s to %s failed due to user not existing in database",
+		
+		logger.warn(String.format(
+				"com.fdmgroup.currencyConverter.transaction for user %s: %.2f %s to %s failed due to user not existing in database",
 				name, amount, currencyFrom, currencyTo));
 	}
 }

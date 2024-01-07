@@ -76,7 +76,7 @@ class UserManagerTest {
 	@Test
 	void executeTransaction_WithInvalidName_DoesNotCallSubtractOrAddCurrency_OnAnyUsers() {
 		userManager.executeTransaction(invalidNameTransaction);
-		verify(mockLogger).warn("com.fdmgroup.currencyConverter.transaction for user D: 10.00 usd to abc failed due to user not existing in database");
+		verify(mockLogger).warn("Transaction for user D: 10.00 usd to abc failed due to user not existing in database");
 		verify(mockUser1, never()).addCurrency(anyString(), any());
 		verify(mockUser2, never()).addCurrency(anyString(), any());
 		verify(mockUser3, never()).addCurrency(anyString(), any());

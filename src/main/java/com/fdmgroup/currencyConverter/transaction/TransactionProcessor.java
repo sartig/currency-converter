@@ -50,12 +50,12 @@ public class TransactionProcessor {
 
 		Queue<Transaction> transactions = transactionReader.readTransactions(transactionFilePath);
 		if (transactions == null) {
-			logger.warn("com.fdmgroup.currencyConverter.transaction list is null");
+			logger.warn("Transaction list is null");
 			return;
 		}
 		int transactionNum = transactions.size();
 		if (transactionNum == 0) {
-			logger.warn("com.fdmgroup.currencyConverter.transaction list is empty");
+			logger.warn("Transaction list is empty");
 			return;
 		}
 		int validTransactions = 0;
@@ -77,7 +77,7 @@ public class TransactionProcessor {
 				currencyTo = transaction.getCurrencyTo();
 		BigDecimal amount = transaction.getAmount();
 
-		String logBase = String.format("com.fdmgroup.currencyConverter.transaction request %s: %.2f %s to %s ", name, amount, currencyFrom,
+		String logBase = String.format("Transaction request %s: %.2f %s to %s ", name, amount, currencyFrom,
 				currencyTo);
 		String invalidLog = logBase + "is invalid due to ";
 		if (amount.compareTo(BigDecimal.ZERO) == 0) {
