@@ -10,6 +10,9 @@ import com.fdmgroup.currencyConverter.currency.CurrencyConverter;
 import com.fdmgroup.currencyConverter.io.UserJsonDataWriter;
 import com.fdmgroup.currencyConverter.user.UserManager;
 
+/**
+ * Facade class to handle processing of transactions.
+ */
 public class TransactionProcessor {
 	private UserManager userManager;
 	private UserJsonDataWriter userJsonDataWriter;
@@ -64,14 +67,30 @@ public class TransactionProcessor {
 			if (validateTransaction(currentTransaction)) {
 				validTransactions++;
 				userManager.executeTransaction(currentTransaction);
-				// update after each com.fdmgroup.currencyConverter.transaction so file is more closely synced to progress
-				updateUserFile(userDataFilePath);
+				// update after each com.fdmgroup.currencyConverter.transaction so file is more
+				// closely synced to progress
+				userJsonDataWriter.writeDataToFilePath(userDataFilePath, userManager.getUserData());
 			}
 		}
-		logger.info("Processed " + validTransactions + " of " + transactionNum + " transactions");
 
+		logger.info("Processed " + validTransactions + " of " + transactionNum + " transactions");
 	}
 
+	/**
+	 * Validates transactions against the following criteria:
+	 * <p>
+	 * <ul>
+	 * <li>Transaction amount must not be zero
+	 * <li>Transaction must not have identical currencies
+	 * <li>Transaction currencies must be valid and exist in
+	 * {@code CurrencyConverter}
+	 * <li>User must exist in {@code UserManager}
+	 * <li>User must have enough currency balance
+	 * </ul>
+	 * 
+	 * @param transaction Transaction object to validate
+	 * @return True if transaction is valid, otherwise false.
+	 */
 	private boolean validateTransaction(Transaction transaction) {
 		String name = transaction.getName(), currencyFrom = transaction.getCurrencyFrom(),
 				currencyTo = transaction.getCurrencyTo();
@@ -96,7 +115,8 @@ public class TransactionProcessor {
 			logger.warn(invalidLog + "invalid currency " + currencyTo);
 			return false;
 		}
-		// at higher use number of users will be higher than number of currencies
+		// at higher use volume, the number of users will be higher than number of
+		// currencies
 		// so do the slower check later
 		if (!userManager.validateUser(name)) {
 			logger.warn(invalidLog + "user not existing in list");
@@ -110,9 +130,4 @@ public class TransactionProcessor {
 		logger.info(logBase + "is valid");
 		return true;
 	}
-
-	private void updateUserFile(String userDataFilePath) {
-		userJsonDataWriter.writeDataToFilePath(userDataFilePath, userManager.getUserData());
-	}
-
 }

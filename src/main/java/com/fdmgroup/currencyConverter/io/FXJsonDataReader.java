@@ -13,7 +13,10 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fdmgroup.currencyConverter.currency.Currency;
 
 /**
+ * Class for specifically loading FX_rates JSON file, formatted as a
+ * {@code HashMap<String, Currency>}
  * 
+ * @see com.fdmgroup.currencyConverter.currency.Currency
  */
 public class FXJsonDataReader extends JsonDataReader<HashMap<String, Currency>> {
 	private static Logger logger = LogManager.getLogger(FXJsonDataReader.class);
@@ -27,6 +30,10 @@ public class FXJsonDataReader extends JsonDataReader<HashMap<String, Currency>> 
 		FXJsonDataReader.logger = logger;
 	}
 
+	/**
+	 * Utility method for logging messages at various levels. Currently implemented
+	 * levels are {@code INFO, WARN, ERROR}.
+	 */
 	@Override
 	void log(String message, StandardLevel level) {
 		switch (level) {

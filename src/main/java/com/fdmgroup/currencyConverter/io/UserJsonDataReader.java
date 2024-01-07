@@ -12,6 +12,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fdmgroup.currencyConverter.user.User;
 
+/**
+ * Class for specifically loading User JSON file, formatted as a
+ * {@code ArrayList<User>}
+ * 
+ * @see com.fdmgroup.currencyConverter.user.User
+ */
 public class UserJsonDataReader extends JsonDataReader<ArrayList<User>> {
 	private static Logger logger = LogManager.getLogger(UserJsonDataReader.class);
 
@@ -25,6 +31,10 @@ public class UserJsonDataReader extends JsonDataReader<ArrayList<User>> {
 		UserJsonDataReader.logger = logger;
 	}
 
+	/**
+	 * Utility method for logging messages at various levels. Currently implemented
+	 * levels are {@code INFO, WARN, ERROR}.
+	 */
 	@Override
 	void log(String message, StandardLevel level) {
 		switch (level) {
@@ -41,7 +51,15 @@ public class UserJsonDataReader extends JsonDataReader<ArrayList<User>> {
 			break;
 		}
 	}
-
+	
+	/**
+	 * Loads JSON containing data. Expects a JSON formatted as a
+	 * {@code ArrayList<User>}.
+	 * 
+	 * @param filePath Path to JSON file
+	 * @return Returns null if there are issues reading the JSON, otherwise returns
+	 *         the parsed file.
+	 */
 	@Override
 	public ArrayList<User> loadDataFromFilePath(String filePath) {
 		String properPath = filePath.replace("/", fileSeparator);
@@ -71,5 +89,4 @@ public class UserJsonDataReader extends JsonDataReader<ArrayList<User>> {
 
 		return data;
 	}
-
 }

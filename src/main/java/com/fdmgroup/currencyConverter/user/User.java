@@ -6,6 +6,10 @@ import java.util.Map;
 
 import com.fdmgroup.currencyConverter.currency.CurrencyRounder;
 
+/**
+ * Class to store information about individual users, along with functionality
+ * to adjust values in their wallets
+ */
 public class User {
 	private String name;
 	private Map<String, Double> wallet = new HashMap<String, Double>();
@@ -17,11 +21,6 @@ public class User {
 
 	}
 
-	/**
-	 * 
-	 * @param name   User name
-	 * @param wallet User wallet
-	 */
 	public User(String name, Map<String, Double> wallet) {
 		super();
 		this.name = name;
@@ -41,9 +40,9 @@ public class User {
 	}
 
 	/**
-	 * Adds currency to the user's wallet.
+	 * Adds currency to the user's wallet. Uses BigDecimal internally for precision.
 	 * 
-	 * @param currencyName Currency to add
+	 * @param currencyName Currency to add as a lowercase three-letter code
 	 * @param amount       Amount to add. Will truncate to 2 decimal places.
 	 */
 	public void addCurrency(String currencyName, BigDecimal amount) {
@@ -61,10 +60,12 @@ public class User {
 	}
 
 	/**
-	 * Removes currency from the user's wallet.
+	 * Removes currency from the user's wallet. Verifies the user has enough
+	 * currency to be removed before performing the operation. Uses BigDecimal
+	 * internally for precision.
 	 * 
-	 * @param currencyName Currency to remove
-	 * @param amount       Amount to remove. Will truncate after 2 decimal places.
+	 * @param currencyName Currency to remove as a three-letter lowercase code
+	 * @param amount       Amount to remove. Will truncate after 2 decimal places
 	 * @throws UserInsufficientBalance If the user does not have enough of the
 	 *                                 specific currency to be removed. Leaves the
 	 *                                 wallet unchanged.
@@ -77,7 +78,7 @@ public class User {
 		String currencyLower = currencyName.toLowerCase();
 		BigDecimal existingAmount = wallet.get(currencyLower) != null
 				? new BigDecimal(Double.toString(wallet.get(currencyLower)))
-						: BigDecimal.ZERO;
+				: BigDecimal.ZERO;
 		BigDecimal subtractAmount = CurrencyRounder.roundCurrency(amount, false);
 		if (existingAmount.compareTo(subtractAmount) < 0) {
 			String errorMessage = String.format(

@@ -13,7 +13,7 @@ import com.fdmgroup.currencyConverter.io.UserJsonDataReader;
 import com.fdmgroup.currencyConverter.transaction.Transaction;
 
 /**
- * Class used for managing Users in app memory.
+ * Class used for managing all Users.
  * 
  * Singleton to conserve memory
  */
@@ -58,7 +58,7 @@ public class UserManager {
 	}
 
 	/**
-	 * Check if a user is in the ArrayList
+	 * Check if a user is in the ArrayList. Is case sensitive
 	 * 
 	 * @param name User name
 	 * @return Returns true if the user is in the list, false if it is not
@@ -73,10 +73,11 @@ public class UserManager {
 	}
 
 	/**
+	 * Method to get a user's balance of a specific currency
 	 * 
-	 * @param name
-	 * @param currency
-	 * @return
+	 * @param name     User name
+	 * @param currency Currency as a lowercase three-letter code
+	 * @return Currency amount; returns 0 if currency does not exist in the wallet
 	 */
 	public BigDecimal getUserBalance(String name, String currency) {
 		for (User u : userData) {
@@ -93,10 +94,21 @@ public class UserManager {
 		return BigDecimal.ZERO;
 	}
 
+	/**
+	 * Method to execute a transaction, converting some amount of one of a user's
+	 * currencies to another. Will not execute the transaction if the user does not
+	 * have the amount of currency required
+	 * 
+	 * @param transaction Transaction data
+	 */
 	public void executeTransaction(Transaction transaction) {
 		String name = transaction.getName(), currencyFrom = transaction.getCurrencyFrom(),
 				currencyTo = transaction.getCurrencyTo();
 		BigDecimal amount = transaction.getAmount();
+
+		if (amount.compareTo(BigDecimal.ZERO) == 0 || currencyFrom.toLowerCase().equals(currencyTo.toLowerCase())) {
+			return;
+		}
 
 		for (User u : userData) {
 			if (!u.getName().equals(name)) {

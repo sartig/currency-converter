@@ -12,7 +12,7 @@ import com.fdmgroup.currencyConverter.io.FXJsonDataReader;
 /**
  * Class used for calculating conversion data between currencies.
  * 
- * Singleton to conserve memory
+ * Is a singleton to conserve memory
  */
 public class CurrencyConverter {
 	private static final String FX_JSON_FILE_PATH = "src/main/resources/fx_rates.json";
@@ -21,8 +21,8 @@ public class CurrencyConverter {
 	private static Logger logger = LogManager.getLogger(CurrencyConverter.class);
 
 	/**
-	 * Constructor is private as {@code CurrencyConverter} is a singleton. The JSON
-	 * data only needs to be loaded once
+	 * Constructor is private as {@code CurrencyConverter} is a singleton. To prevent the JSON
+	 * data being loaded more than once
 	 */
 	private CurrencyConverter() {
 		// load json and store into hashmap

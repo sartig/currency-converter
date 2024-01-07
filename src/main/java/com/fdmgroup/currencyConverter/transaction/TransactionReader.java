@@ -11,6 +11,10 @@ import java.util.Queue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * Class to parse transaction list file into a Queue of transactions, thus
+ * ensuring transactions are executed in the order specified.
+ */
 public class TransactionReader {
 	private Logger logger = LogManager.getLogger(TransactionReader.class);
 
@@ -18,6 +22,20 @@ public class TransactionReader {
 		this.logger = logger;
 	}
 
+	/**
+	 * Method to read the transactions into memory.
+	 * 
+	 * The transactions file is expected to store each transaction on a new line and
+	 * be formatted as four space-separated-values:
+	 * 
+	 * [User name] [currency from code] [currency to code] [amount]
+	 * 
+	 * The currency codes are expected to be lowercase three-letter representations.
+	 * The amount is expected to be numeric.
+	 * 
+	 * @param filePath Path to file containing transactions
+	 * @return Returns transactions in the same order as in the file
+	 */
 	public Queue<Transaction> readTransactions(String filePath) {
 		String properFilePath = filePath.replace("/", FileSystems.getDefault().getSeparator());
 		Queue<Transaction> transactionQueue = new LinkedList<Transaction>();

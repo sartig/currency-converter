@@ -12,6 +12,12 @@ import org.apache.logging.log4j.spi.StandardLevel;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fdmgroup.currencyConverter.user.User;
 
+/**
+ * Class for specifically modifying User JSON file, formatted as a
+ * {@code ArrayList<User>}
+ * 
+ * @see com.fdmgroup.currencyConverter.user.User
+ */
 public class UserJsonDataWriter {
 	private static Logger logger = LogManager.getLogger(UserJsonDataWriter.class);
 	static final String fileSeparator = FileSystems.getDefault().getSeparator();
@@ -26,6 +32,10 @@ public class UserJsonDataWriter {
 		UserJsonDataWriter.logger = logger;
 	}
 
+	/**
+	 * Utility method for logging messages at various levels. Currently implemented
+	 * levels are {@code INFO, WARN, ERROR}.
+	 */
 	private void log(String message, StandardLevel level) {
 		switch (level) {
 		case INFO:
@@ -42,6 +52,12 @@ public class UserJsonDataWriter {
 		}
 	}
 
+	/**
+	 * Saves JSON containing data. Expects an {@code ArrayList<User>}.
+	 * 
+	 * @param filePath Path to JSON file
+	 * @param userData Data to seralise
+	 */
 	public void writeDataToFilePath(String filePath, ArrayList<User> userData) {
 		String properPath = filePath.replace("/", fileSeparator);
 		File file = new File(properPath);
@@ -52,5 +68,4 @@ public class UserJsonDataWriter {
 			log("Unable to write User data to " + properPath, StandardLevel.ERROR);
 		}
 	}
-
 }
