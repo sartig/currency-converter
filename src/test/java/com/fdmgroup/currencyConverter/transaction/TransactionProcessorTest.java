@@ -50,7 +50,7 @@ class TransactionProcessorTest {
 
 		transactionProcessor.processAllTransactions("dummy", "dummy");
 
-		verify(mockLogger).warn("com.fdmgroup.currencyConverter.transaction list is null");
+		verify(mockLogger).warn("Transaction list is null");
 		verifyNoInteractions(mockUserJsonDataWriter);
 	}
 
@@ -60,7 +60,7 @@ class TransactionProcessorTest {
 
 		transactionProcessor.processAllTransactions("dummy", "dummy");
 
-		verify(mockLogger).warn("com.fdmgroup.currencyConverter.transaction list is empty");
+		verify(mockLogger).warn("Transaction list is empty");
 		verifyNoInteractions(mockUserJsonDataWriter);
 	}
 
@@ -72,7 +72,7 @@ class TransactionProcessorTest {
 
 		transactionProcessor.processAllTransactions("dummy", "dummy");
 
-		verify(mockLogger).warn("com.fdmgroup.currencyConverter.transaction request Zero: 0.00 gbp to hkd is invalid due to zero-value amount");
+		verify(mockLogger).warn("Transaction request Zero: 0.00 gbp to hkd is invalid due to zero-value amount");
 		verifyNoInteractions(mockUserJsonDataWriter);
 	}
 
@@ -84,7 +84,7 @@ class TransactionProcessorTest {
 
 		transactionProcessor.processAllTransactions("dummy", "dummy");
 
-		verify(mockLogger).warn("com.fdmgroup.currencyConverter.transaction request Dupe: 19.00 usd to usd is invalid due to identical currencies");
+		verify(mockLogger).warn("Transaction request Dupe: 19.00 usd to usd is invalid due to identical currencies");
 		verifyNoInteractions(mockUserJsonDataWriter);
 	}
 
@@ -114,7 +114,7 @@ class TransactionProcessorTest {
 		transactionProcessor.processAllTransactions("dummy", "dummy");
 
 		verify(mockLogger)
-				.warn("com.fdmgroup.currencyConverter.transaction request Gone: 100.00 hkd to usd is invalid due to user not existing in list");
+				.warn("Transaction request Gone: 100.00 hkd to usd is invalid due to user not existing in list");
 		verifyNoInteractions(mockUserJsonDataWriter);
 	}
 
@@ -131,7 +131,7 @@ class TransactionProcessorTest {
 		transactionProcessor.processAllTransactions("dummy", "dummy");
 
 		verify(mockLogger).warn(
-				"com.fdmgroup.currencyConverter.transaction request Poor: 1000.00 hkd to usd is invalid due to insufficient balance in user wallet (50.00)");
+				"Transaction request Poor: 1000.00 hkd to usd is invalid due to insufficient balance in user wallet (50.00)");
 		verifyNoInteractions(mockUserJsonDataWriter);
 	}
 
@@ -148,7 +148,7 @@ class TransactionProcessorTest {
 
 		transactionProcessor.processAllTransactions("dummy", "dummy2");
 
-		verify(mockLogger).info("com.fdmgroup.currencyConverter.transaction request Valid: 10.00 usd to gbp is valid");
+		verify(mockLogger).info("Transaction request Valid: 10.00 usd to gbp is valid");
 		verify(mockLogger).info("Processed 1 of 1 transactions");
 		verify(mockUserManager).executeTransaction(transactionWithValid);
 		verify(mockUserJsonDataWriter).writeDataToFilePath("dummy2", null);
@@ -168,8 +168,8 @@ class TransactionProcessorTest {
 
 		transactionProcessor.processAllTransactions("dummy", "dummy2");
 
-		verify(mockLogger).warn("com.fdmgroup.currencyConverter.transaction request Zero: 0.00 gbp to hkd is invalid due to zero-value amount");
-		verify(mockLogger).info("com.fdmgroup.currencyConverter.transaction request Valid: 10.00 usd to gbp is valid");
+		verify(mockLogger).warn("Transaction request Zero: 0.00 gbp to hkd is invalid due to zero-value amount");
+		verify(mockLogger).info("Transaction request Valid: 10.00 usd to gbp is valid");
 		verify(mockLogger).info("Processed 1 of 2 transactions");
 		verify(mockUserManager).executeTransaction(transactionWithValid);
 		verify(mockUserJsonDataWriter).writeDataToFilePath("dummy2", null);
@@ -189,7 +189,7 @@ class TransactionProcessorTest {
 
 		transactionProcessor.processAllTransactions("dummy", "dummy2");
 
-		verify(mockLogger, times(2)).info("com.fdmgroup.currencyConverter.transaction request Valid: 10.00 usd to gbp is valid");
+		verify(mockLogger, times(2)).info("Transaction request Valid: 10.00 usd to gbp is valid");
 		verify(mockLogger).info("Processed 2 of 2 transactions");
 		verify(mockUserManager, times(2)).executeTransaction(transactionWithValid);
 		verify(mockUserJsonDataWriter, times(2)).writeDataToFilePath("dummy2", null);
