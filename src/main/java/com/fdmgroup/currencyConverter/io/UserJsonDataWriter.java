@@ -56,7 +56,7 @@ public class UserJsonDataWriter {
 	 * Saves JSON containing data. Expects an {@code ArrayList<User>}.
 	 * 
 	 * @param filePath Path to JSON file
-	 * @param userData Data to seralise
+	 * @param userData Data to serialise
 	 */
 	public void writeDataToFilePath(String filePath, ArrayList<User> userData) {
 		String properPath = filePath.replace("/", fileSeparator);

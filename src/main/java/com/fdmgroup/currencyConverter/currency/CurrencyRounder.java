@@ -10,7 +10,7 @@ public class CurrencyRounder {
 	/**
 	 * 
 	 * @param amount        Value to round as a BigDecimal
-	 * @param shouldRoundUp Uses {@link java.Math#RoundingMode} {@code CEILING} if
+	 * @param shouldRoundUp Uses {@link java.math.RoundingMode} {@code CEILING} if
 	 *                      true, otherwise uses {@code FLOOR}
 	 * @return Returns BigDecimal with 2 decimal places
 	 */

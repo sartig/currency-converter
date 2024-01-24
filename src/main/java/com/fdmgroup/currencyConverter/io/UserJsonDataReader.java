@@ -65,10 +65,10 @@ public class UserJsonDataReader extends JsonDataReader<ArrayList<User>> {
 		String properPath = filePath.replace("/", fileSeparator);
 		File file = new File(properPath);
 
-		ArrayList<User> data = null;
+		ArrayList<User> data;
 		try {
-			data = objectMapper.readValue(file, new TypeReference<ArrayList<User>>() {
-			});
+			data = objectMapper.readValue(file, new TypeReference<>() {
+            });
 		} catch (DatabindException dbe) {
 
 			log("Unable to parse JSON file data at path " + properPath + " to ArrayList<User>", StandardLevel.ERROR);

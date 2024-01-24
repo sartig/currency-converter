@@ -10,14 +10,12 @@ import org.apache.logging.log4j.Logger;
 import com.fdmgroup.currencyConverter.io.FXJsonDataReader;
 
 /**
- * Class used for calculating conversion data between currencies.
- * 
- * Is a singleton to conserve memory
+ * Class used for calculating conversion data between currencies. Is a singleton to conserve memory.
  */
 public class CurrencyConverter {
 	private static final String FX_JSON_FILE_PATH = "src/main/resources/fx_rates.json";
 	private static CurrencyConverter instance;
-	private HashMap<String, Currency> currencyData = new HashMap<String, Currency>();
+	private HashMap<String, Currency> currencyData;
 	private static Logger logger = LogManager.getLogger(CurrencyConverter.class);
 
 	/**
@@ -57,9 +55,9 @@ public class CurrencyConverter {
 	 * {@code convert(String startCurrency, String endCurrency, double amount)} to
 	 * perform validation of currencies with a different error log.
 	 * 
-	 * @param shouldLog
-	 * @param currencies
-	 * @return
+	 * @param shouldLog If true, will log a warning indicating which currency is not valid
+	 * @param currencies List of currencies to validate
+	 * @return True only if all given currencies are valid
 	 */
 	private boolean validate(boolean shouldLog, String... currencies) {
 		for (String s : currencies) {
@@ -92,7 +90,7 @@ public class CurrencyConverter {
 	 * Calculates conversion between currencies. USD is the anchor currency so its
 	 * multipliers are always 1. Results are rounded down to 2 decimal places to
 	 * prevent creating additional value.
-	 * 
+	 * <p>
 	 * If this method logs an error then it is likely that
 	 * {@code validate(String... currencies} was not called
 	 * 
@@ -100,7 +98,7 @@ public class CurrencyConverter {
 	 * @param endCurrency   Destination currency as three lowercase letter code
 	 * @param amount        Amount of starting currency to convert. Rounded down if
 	 *                      more than 2 decimal places given.
-	 * @return
+	 * @return The converted amount as a BigDecimal.
 	 */
 	public BigDecimal convert(String startCurrency, String endCurrency, BigDecimal amount) {
 		if (startCurrency.equalsIgnoreCase(endCurrency)) {

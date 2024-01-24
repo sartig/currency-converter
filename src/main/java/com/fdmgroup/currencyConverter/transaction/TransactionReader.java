@@ -24,12 +24,12 @@ public class TransactionReader {
 
 	/**
 	 * Method to read the transactions into memory.
-	 * 
+	 * <p>
 	 * The transactions file is expected to store each transaction on a new line and
 	 * be formatted as four space-separated-values:
-	 * 
+	 * <p>
 	 * [User name] [currency from code] [currency to code] [amount]
-	 * 
+	 * <p>
 	 * The currency codes are expected to be lowercase three-letter representations.
 	 * The amount is expected to be numeric.
 	 * 
@@ -38,7 +38,7 @@ public class TransactionReader {
 	 */
 	public Queue<Transaction> readTransactions(String filePath) {
 		String properFilePath = filePath.replace("/", FileSystems.getDefault().getSeparator());
-		Queue<Transaction> transactionQueue = new LinkedList<Transaction>();
+		Queue<Transaction> transactionQueue = new LinkedList<>();
 		try (FileReader fr = new FileReader(properFilePath); BufferedReader br = new BufferedReader(fr)) {
 			String line;
 			int lineNumber = 0;
@@ -65,7 +65,7 @@ public class TransactionReader {
 		} catch (IOException e) {
 			logger.error("Unable to read file at path " + properFilePath);
 		}
-		if (transactionQueue.size() == 0) {
+		if (transactionQueue.isEmpty()) {
 			logger.warn("Parsing file at " + properFilePath + " resulted in zero transactions");
 		} else {
 			logger.info("Successfully parsed " + transactionQueue.size() + " transactions from file " + properFilePath);

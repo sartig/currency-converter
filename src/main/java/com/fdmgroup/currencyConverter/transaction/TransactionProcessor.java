@@ -67,7 +67,7 @@ public class TransactionProcessor {
 			if (validateTransaction(currentTransaction)) {
 				validTransactions++;
 				userManager.executeTransaction(currentTransaction);
-				// update after each com.fdmgroup.currencyConverter.transaction so file is more
+				// update after each transaction so file is more
 				// closely synced to progress
 				userJsonDataWriter.writeDataToFilePath(userDataFilePath, userManager.getUserData());
 			}
@@ -103,7 +103,7 @@ public class TransactionProcessor {
 			logger.warn(invalidLog + "zero-value amount");
 			return false;
 		}
-		if (currencyFrom.toLowerCase().equals(currencyTo.toLowerCase())) {
+		if (currencyFrom.equalsIgnoreCase(currencyTo)) {
 			logger.warn(invalidLog + "identical currencies");
 			return false;
 		}
@@ -123,7 +123,7 @@ public class TransactionProcessor {
 			return false;
 		}
 		BigDecimal userAmount = userManager.getUserBalance(name, currencyFrom);
-		if (userAmount.compareTo(amount) == -1) {
+		if (userAmount.compareTo(amount) < 0) {
 			logger.warn(invalidLog + String.format("insufficient balance in user wallet (%.2f)", userAmount));
 			return false;
 		}

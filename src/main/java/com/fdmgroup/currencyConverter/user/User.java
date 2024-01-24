@@ -12,10 +12,10 @@ import com.fdmgroup.currencyConverter.currency.CurrencyRounder;
  */
 public class User {
 	private String name;
-	private Map<String, Double> wallet = new HashMap<String, Double>();
+	private Map<String, Double> wallet = new HashMap<>();
 
 	/**
-	 * No-args constructor required for Jackson deserialisation.
+	 * No-args constructor required for Jackson deserialization.
 	 */
 	public User() {
 
@@ -51,12 +51,12 @@ public class User {
 		}
 		// should only add amounts that are max 2 decimal places
 		// always round down amount added
-		String currencylower = currencyName.toLowerCase();
-		BigDecimal existingAmount = wallet.get(currencylower) != null
-				? new BigDecimal(Double.toString(wallet.get(currencylower)))
+		String currencyLower = currencyName.toLowerCase();
+		BigDecimal existingAmount = wallet.get(currencyLower) != null
+				? new BigDecimal(Double.toString(wallet.get(currencyLower)))
 				: BigDecimal.ZERO;
 		BigDecimal finalAmount = CurrencyRounder.roundCurrency(existingAmount.add(amount), false);
-		wallet.put(currencylower, finalAmount.doubleValue());
+		wallet.put(currencyLower, finalAmount.doubleValue());
 	}
 
 	/**

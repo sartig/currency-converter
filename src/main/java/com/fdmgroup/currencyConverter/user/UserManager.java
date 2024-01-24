@@ -13,14 +13,12 @@ import com.fdmgroup.currencyConverter.io.UserJsonDataReader;
 import com.fdmgroup.currencyConverter.transaction.Transaction;
 
 /**
- * Class used for managing all Users.
- * 
- * Singleton to conserve memory
+ * Class used for managing all Users. Is a singleton to conserve memory
  */
 public class UserManager {
 	private static final String FX_JSON_FILE_PATH = "src/main/resources/users.json";
 	private static UserManager instance;
-	private ArrayList<User> userData = new ArrayList<User>();
+	private ArrayList<User> userData;
 	private Logger logger = LogManager.getLogger(UserManager.class);
 
 	/**
@@ -58,7 +56,7 @@ public class UserManager {
 	}
 
 	/**
-	 * Check if a user is in the ArrayList. Is case sensitive
+	 * Check if a user is in the ArrayList. Is case-sensitive
 	 * 
 	 * @param name User name
 	 * @return Returns true if the user is in the list, false if it is not
@@ -106,7 +104,7 @@ public class UserManager {
 				currencyTo = transaction.currencyTo();
 		BigDecimal amount = transaction.amount();
 
-		if (amount.compareTo(BigDecimal.ZERO) == 0 || currencyFrom.toLowerCase().equals(currencyTo.toLowerCase())) {
+		if (amount.compareTo(BigDecimal.ZERO) == 0 || currencyFrom.equalsIgnoreCase(currencyTo)) {
 			return;
 		}
 
@@ -122,8 +120,8 @@ public class UserManager {
 				logger.info(String.format("User %s: converted %.2f %s to %.2f %s", u.getName(),
 						subtractAmount.doubleValue(), currencyFrom, addAmount.doubleValue(), currencyTo));
 				logger.info(String.format("Updated user %s balance: %.2f %s, %.2f %s", u.getName(),
-						u.getWallet().get(currencyFrom).doubleValue(), currencyFrom,
-						u.getWallet().get(currencyTo).doubleValue(), currencyTo));
+                        u.getWallet().get(currencyFrom), currencyFrom,
+                        u.getWallet().get(currencyTo), currencyTo));
 				return;
 			} catch (UserInsufficientBalance e) {
 				logger.error(e.getMessage());

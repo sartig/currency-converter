@@ -6,7 +6,7 @@ import java.nio.file.FileSystems;
  * @param <T> Format of data to read
  */
 public interface DataReader<T> {
-	static final String fileSeparator = FileSystems.getDefault().getSeparator();
+	String fileSeparator = FileSystems.getDefault().getSeparator();
 
 	T loadDataFromFilePath(String filePath);
 

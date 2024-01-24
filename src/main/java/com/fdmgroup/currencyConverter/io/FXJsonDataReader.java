@@ -64,10 +64,10 @@ public class FXJsonDataReader extends JsonDataReader<HashMap<String, Currency>> 
 		String properPath = filePath.replace("/", fileSeparator);
 		File file = new File(properPath);
 
-		HashMap<String, Currency> data = null;
+		HashMap<String, Currency> data;
 		try {
-			data = objectMapper.readValue(file, new TypeReference<HashMap<String, Currency>>() {
-			});
+			data = objectMapper.readValue(file, new TypeReference<>() {
+            });
 		} catch (DatabindException dbe) {
 
 			log("Unable to parse JSON file data at path " + properPath + " to HashMap<String, Currency>",
