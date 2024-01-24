@@ -30,6 +30,8 @@ class UserManagerTest {
 	Transaction invalidNameTransaction = new Transaction("D", "usd", "abc", new BigDecimal("10.00"));
 	Transaction insufficientBalanceTransaction = new Transaction("C", "usd", "gbp", new BigDecimal("10.00"));
 	Transaction validTransaction = new Transaction("C", "hkd", "gbp", new BigDecimal("10.00"));
+	Transaction zeroValueTransaction = new Transaction("D", "hkd", "nzd", BigDecimal.ZERO);
+	Transaction duplicatedCurrencyTransaction = new Transaction("F", "hkd", "hkd", new BigDecimal("5.00"));
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -39,34 +41,43 @@ class UserManagerTest {
 		users.add(mockUser2);
 		users.add(mockUser3);
 		userManager.setUserData(users);
+	}
+
+	void setupNames() {
 		when(mockUser1.getName()).thenReturn("A");
 		when(mockUser2.getName()).thenReturn("B");
 		when(mockUser3.getName()).thenReturn("C");
+
 	}
 
 	@Test
 	void validateUser_WithInvalidName_ReturnsFalse() {
+		setupNames();
 		assertFalse(userManager.validateUser("D"));
 	}
 
 	@Test
 	void validateUser_WithValidName_ReturnsFalse() {
+		setupNames();
 		assertTrue(userManager.validateUser("C"));
 	}
 
 	@Test
 	void getUserBalance_WithInvalidName_ReturnsZero() {
+		setupNames();
 		assertEquals(0, userManager.getUserBalance("D", "usd").compareTo(BigDecimal.ZERO));
 	}
 
 	@Test
 	void getUserBalance_WithValidName_WithNullBalance_ReturnsZero() {
+		setupNames();
 		when(mockUser3.getWallet()).thenReturn(new HashMap<String, Double>());
 		assertEquals(0, userManager.getUserBalance("C", "usd").compareTo(BigDecimal.ZERO));
 	}
 
 	@Test
 	void getUserBalance_WithValidName_WithExistingBalance_ReturnsCorrectBalance() {
+		setupNames();
 		HashMap<String, Double> wallet = new HashMap<String, Double>();
 		wallet.put("usd", 12.0);
 		when(mockUser3.getWallet()).thenReturn(wallet);
@@ -75,6 +86,7 @@ class UserManagerTest {
 
 	@Test
 	void executeTransaction_WithInvalidName_DoesNotCallSubtractOrAddCurrency_OnAnyUsers() {
+		setupNames();
 		userManager.executeTransaction(invalidNameTransaction);
 		verify(mockLogger).warn("Transaction for user D: 10.00 usd to abc failed due to user not existing in database");
 		verify(mockUser1, never()).addCurrency(anyString(), any());
@@ -86,23 +98,46 @@ class UserManagerTest {
 	}
 
 	@Test
-	void executeTransaction_WithInsufficientWallet_DoesNotCallAddCurrencyOnUser_AndLogsError_FromUserException() {
-		try {
-			doThrow(new UserInsufficientBalance("mock error")).when(mockUser3).subtractCurrency("usd", new BigDecimal("10.00"));
-			userManager.executeTransaction(insufficientBalanceTransaction);
-			verify(mockLogger).error("mock error");
-			verify(mockUser1, never()).addCurrency(anyString(), any());
-			verify(mockUser2, never()).addCurrency(anyString(), any());
-			verify(mockUser3, never()).addCurrency(anyString(), any());
-			assertDoesNotThrow(() -> verify(mockUser1, never()).subtractCurrency(anyString(), any()));
-			assertDoesNotThrow(() -> verify(mockUser2, never()).subtractCurrency(anyString(), any()));
-		} catch (UserInsufficientBalance e) {
-			fail("error thrown");
-		}
+	void executeTransaction_WithZeroAmount_DoesNotCallSubtractOrAddCurrency_OnAnyUsers() {
+		userManager.executeTransaction(zeroValueTransaction);
+		verify(mockUser1, never()).addCurrency(anyString(), any());
+		verify(mockUser2, never()).addCurrency(anyString(), any());
+		verify(mockUser3, never()).addCurrency(anyString(), any());
+		assertDoesNotThrow(() -> verify(mockUser1, never()).subtractCurrency(anyString(), any()));
+		assertDoesNotThrow(() -> verify(mockUser2, never()).subtractCurrency(anyString(), any()));
+		assertDoesNotThrow(() -> verify(mockUser3, never()).subtractCurrency(anyString(), any()));
+	}
+
+	@Test
+	void executeTransaction_WithDuplicatedCurreny_DoesNotCallSubtractOrAddCurrency_OnAnyUsers() {
+		userManager.executeTransaction(duplicatedCurrencyTransaction);
+		verify(mockUser1, never()).addCurrency(anyString(), any());
+		verify(mockUser2, never()).addCurrency(anyString(), any());
+		verify(mockUser3, never()).addCurrency(anyString(), any());
+		assertDoesNotThrow(() -> verify(mockUser1, never()).subtractCurrency(anyString(), any()));
+		assertDoesNotThrow(() -> verify(mockUser2, never()).subtractCurrency(anyString(), any()));
+		assertDoesNotThrow(() -> verify(mockUser3, never()).subtractCurrency(anyString(), any()));
+	}
+
+	@Test
+	void executeTransaction_WithInsufficientWallet_DoesNotCallAddCurrencyOnUser_AndLogsError_FromUserException()
+			throws UserInsufficientBalance {
+		setupNames();
+		doThrow(new UserInsufficientBalance("mock error")).when(mockUser3).subtractCurrency("usd",
+				new BigDecimal("10.00"));
+		userManager.executeTransaction(insufficientBalanceTransaction);
+		verify(mockLogger).error("mock error");
+		verify(mockUser1, never()).addCurrency(anyString(), any());
+		verify(mockUser2, never()).addCurrency(anyString(), any());
+		verify(mockUser3, never()).addCurrency(anyString(), any());
+		assertDoesNotThrow(() -> verify(mockUser1, never()).subtractCurrency(anyString(), any()));
+		assertDoesNotThrow(() -> verify(mockUser2, never()).subtractCurrency(anyString(), any()));
+
 	}
 
 	@Test
 	void executeTransaction_WithValidTransaction_CallsSubtractCurrency_AndAddCurrency_OnUser() {
+		setupNames();
 		HashMap<String, Double> mockWallet = new HashMap<String, Double>();
 		mockWallet.put("hkd", 15.0);
 		mockWallet.put("gbp", 1.08);

@@ -31,7 +31,8 @@ class TransactionProcessorTest {
 
 	Transaction transactionWithSameCurrency = new Transaction("Dupe", "usd", "usd", new BigDecimal("19")),
 			transactionWithZeroAmount = new Transaction("Zero", "gbp", "hkd", new BigDecimal("0")),
-			transactionWithInvalidCurrency = new Transaction("Invalid", "zzz", "aaa", new BigDecimal("103")),
+			transactionWithBothInvalidCurrency = new Transaction("Invalid", "zzz", "aaa", new BigDecimal("103")),
+			transactionWithOneInvalidCurrency = new Transaction("Invalid", "usd", "aaa", new BigDecimal("103")),
 			transactionWithBadName = new Transaction("Gone", "hkd", "usd", new BigDecimal("100")),
 			transactionWithBadWallet = new Transaction("Poor", "hkd", "usd", new BigDecimal("1000")),
 			transactionWithValid = new Transaction("Valid", "usd", "gbp", new BigDecimal("10"));
@@ -89,16 +90,31 @@ class TransactionProcessorTest {
 	}
 
 	@Test
-	void processAllTransactions_WithQueueWithOneItem_ThatHasInvalidCurrency_LogsWarning_AndDoesNotUpdateUserJson() {
+	void processAllTransactions_WithQueueWithOneItem_ThatHasBothInvalidCurrency_LogsWarning_AndDoesNotUpdateUserJson() {
 		LinkedList<Transaction> input = new LinkedList<Transaction>();
-		input.add(transactionWithInvalidCurrency);
+		input.add(transactionWithBothInvalidCurrency);
 		when(mockTransactionReader.readTransactions("dummy")).thenReturn(input);
 		when(mockCurrencyConverter.validate("zzz")).thenReturn(false);
 
 		transactionProcessor.processAllTransactions("dummy", "dummy");
 
 		verify(mockLogger)
-				.warn("com.fdmgroup.currencyConverter.transaction request Invalid: 103.00 zzz to aaa is invalid due to invalid currency zzz");
+				.warn("Transaction request Invalid: 103.00 zzz to aaa is invalid due to invalid currency zzz");
+		verifyNoInteractions(mockUserJsonDataWriter);
+	}
+
+	@Test
+	void processAllTransactions_WithQueueWithOneItem_ThatHasOneValidAndOneInvalidCurrency_LogsWarning_AndDoesNotUpdateUserJson() {
+		LinkedList<Transaction> input = new LinkedList<Transaction>();
+		input.add(transactionWithOneInvalidCurrency);
+		when(mockTransactionReader.readTransactions("dummy")).thenReturn(input);
+		when(mockCurrencyConverter.validate("usd")).thenReturn(true);
+		when(mockCurrencyConverter.validate("aaa")).thenReturn(false);
+
+		transactionProcessor.processAllTransactions("dummy", "dummy");
+
+		verify(mockLogger)
+				.warn("Transaction request Invalid: 103.00 usd to aaa is invalid due to invalid currency aaa");
 		verifyNoInteractions(mockUserJsonDataWriter);
 	}
 

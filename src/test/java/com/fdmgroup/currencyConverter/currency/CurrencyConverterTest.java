@@ -56,8 +56,15 @@ class CurrencyConverterTest {
 	}
 
 	@Test
-	void convert_WithInvalidCurrency_Returns0_AndLogsError() {
+	void convert_WithInvalidStartCurrency_Returns0_AndLogsError() {
 		BigDecimal result = currencyConverter.convert("abc", "usd", new BigDecimal("10"));
+		verify(mockLogger).error("Trying to convert invalid currency: abc");
+		assertEquals(0, result.compareTo(BigDecimal.ZERO));
+	}
+	
+	@Test
+	void convert_WithInvalidEndCurrency_Returns0_AndLogsError() {
+		BigDecimal result = currencyConverter.convert("usd", "abc", new BigDecimal("10"));
 		verify(mockLogger).error("Trying to convert invalid currency: abc");
 		assertEquals(0, result.compareTo(BigDecimal.ZERO));
 	}
@@ -72,7 +79,6 @@ class CurrencyConverterTest {
 
 	@Test
 	void convert_100Point009GBPToHKD_RoundsAmountToConvertDown_AndLogsWarning_AndLogsInfoWith100Instead() {
-
 		BigDecimal expected = new BigDecimal("918.64"); // rounded from 918.641...
 		BigDecimal result = currencyConverter.convert("gbp", "hkd", new BigDecimal("100.009"));
 		verify(mockLogger).info("Conversion of 100.00 gbp to 918.64 hkd");

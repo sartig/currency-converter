@@ -49,6 +49,13 @@ class UserTest {
 	}
 
 	@Test
+	void subtractCurrency_WithZeroCurrency_DoesNotChangeWallet() throws UserInsufficientBalance {
+		HashMap<String, Double> expected = new HashMap<String, Double>();
+		user.subtractCurrency("hkd", BigDecimal.ZERO);
+		assertEquals(expected, user.getWallet());
+	}
+
+	@Test
 	void subtractCurrency_ThrowsUserInsufficientBalanceError_WhenSubtractingCurrencyNotInWallet() {
 		Exception e = assertThrows(UserInsufficientBalance.class,
 				() -> user.subtractCurrency("usd", new BigDecimal("10")));
