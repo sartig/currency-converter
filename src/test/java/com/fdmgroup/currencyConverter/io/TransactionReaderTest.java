@@ -75,8 +75,8 @@ class TransactionReaderTest {
 		verify(mockLogger).info("Successfully parsed 2 transactions from file " + properFilePath);
 		Transaction first = result.peek();
 		assertEquals(2, result.size());
-		assertEquals("Bob", first.getName());
-		assertEquals(0, first.getAmount().compareTo(new BigDecimal("100")));
+		assertEquals("Bob", first.name());
+		assertEquals(0, first.amount().compareTo(new BigDecimal("100")));
 	}
 
 	@Test
@@ -88,8 +88,8 @@ class TransactionReaderTest {
 		verify(mockLogger).info("Successfully parsed 2 transactions from file " + properFilePath);
 		Transaction first = result.peek();
 		assertEquals(2, result.size());
-		assertEquals("Chad", first.getName());
-		assertEquals(0, first.getAmount().compareTo(new BigDecimal("200.59")));
+		assertEquals("Chad", first.name());
+		assertEquals(0, first.amount().compareTo(new BigDecimal("200.59")));
 	}
 
 }

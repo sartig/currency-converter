@@ -102,9 +102,9 @@ public class UserManager {
 	 * @param transaction Transaction data
 	 */
 	public void executeTransaction(Transaction transaction) {
-		String name = transaction.getName(), currencyFrom = transaction.getCurrencyFrom(),
-				currencyTo = transaction.getCurrencyTo();
-		BigDecimal amount = transaction.getAmount();
+		String name = transaction.name(), currencyFrom = transaction.currencyFrom(),
+				currencyTo = transaction.currencyTo();
+		BigDecimal amount = transaction.amount();
 
 		if (amount.compareTo(BigDecimal.ZERO) == 0 || currencyFrom.toLowerCase().equals(currencyTo.toLowerCase())) {
 			return;

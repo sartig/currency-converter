@@ -92,9 +92,9 @@ public class TransactionProcessor {
 	 * @return True if transaction is valid, otherwise false.
 	 */
 	private boolean validateTransaction(Transaction transaction) {
-		String name = transaction.getName(), currencyFrom = transaction.getCurrencyFrom(),
-				currencyTo = transaction.getCurrencyTo();
-		BigDecimal amount = transaction.getAmount();
+		String name = transaction.name(), currencyFrom = transaction.currencyFrom(),
+				currencyTo = transaction.currencyTo();
+		BigDecimal amount = transaction.amount();
 
 		String logBase = String.format("Transaction request %s: %.2f %s to %s ", name, amount, currencyFrom,
 				currencyTo);
